@@ -33,7 +33,6 @@ class Titles(models.Model):
         on_delete=models.SET_NULL,
         related_name='titles',
         verbose_name='Категория',
-        blank=True,
         null=True,
     )
 
