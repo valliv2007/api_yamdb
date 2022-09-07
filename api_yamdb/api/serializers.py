@@ -20,7 +20,7 @@ class GenreSerializer(serializers.ModelSerializer):
 
 class TitlesSerializer(serializers.ModelSerializer):
     category = CategorySerializer()
-    genre = serializers.SerializerMethodField()
+    genre = GenreSerializer(many=True)
     rating = serializers.SerializerMethodField(read_only=True)
 
     class Meta:
@@ -41,9 +41,6 @@ class TitlesSerializer(serializers.ModelSerializer):
                 GenreTitle.objects.create(
                     genre=current_genre, title=title)
             return title
-
-    def get_genre(self, obj):
-        return GenreTitle.objects.select_related().filter(title=obj.id)
 
     def get_rating(self, obj):
         return Review.objects.aggregate(Avg('score'))
