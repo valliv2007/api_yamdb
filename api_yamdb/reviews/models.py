@@ -88,7 +88,6 @@ class Review(models.Model):
         on_delete=models.CASCADE,
         related_name="reviews",
         verbose_name="Описание",
-        db_constraint=False,
     )
     text = models.TextField(verbose_name="Текст")
     pub_date = models.DateTimeField(
@@ -108,7 +107,6 @@ class Review(models.Model):
             )
         ]
 
-        ordering = ["-pub_date"]
         verbose_name = "Review"
         verbose_name_plural = 'Reviews'
 
@@ -134,6 +132,5 @@ class Comment(models.Model):
     )
 
     class Meta:
-        ordering = ["-pub_date"]
         verbose_name = "Comment"
         verbose_name_plural = 'Comments'
