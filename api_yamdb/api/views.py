@@ -1,5 +1,4 @@
 from rest_framework import viewsets, filters
-from rest_framework.permissions import AllowAny
 
 from .mixins import GetPostDeleteViewSet
 from reviews.models import Titles, Genre, Category
@@ -10,7 +9,7 @@ from .permissions import AdminOrReadOnly
 
 class TitlesViewSet(viewsets.ModelViewSet):
     queryset = Titles.objects.all()
-    permission_classes = (AllowAny,)
+    permission_classes = (AdminOrReadOnly,)
     filter_backends = (filters.SearchFilter,)
     search_fields = ('name', 'year', 'category', 'genre')
 
@@ -32,7 +31,7 @@ class CategoryViewSet(GetPostDeleteViewSet):
 class GenreViewSet(GetPostDeleteViewSet):
     queryset = Genre.objects.all()
     serializer_class = GenreSerializer
-    permission_classes = (AllowAny,)
+    permission_classes = (AdminOrReadOnly,)
     filter_backends = (filters.SearchFilter,)
     search_fields = ('name',)
     lookup_field = 'slug'

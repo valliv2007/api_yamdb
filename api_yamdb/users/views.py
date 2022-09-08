@@ -9,6 +9,7 @@ from rest_framework_simplejwt.tokens import AccessToken
 
 from .models import User
 from .serializers import JWTTokenSerializer, UserSerializer
+from api_yamdb.settings import DEFAULT_FROM_EMAIL
 
 
 def send_confirmation_code_on_email(username, email):
@@ -16,6 +17,7 @@ def send_confirmation_code_on_email(username, email):
     confirmation_code = default_token_generator.make_token(user)
     send_mail(subject='Код подтверждения для регистриции на YaMDb',
               message=f'Ваш код {confirmation_code}',
+              from_email=DEFAULT_FROM_EMAIL,
               recipient_list=[email])
 
 
@@ -23,7 +25,7 @@ class SignUp(APIView):
     permission_classes = (AllowAny,)
 
     def post(self, request):
-        serializer = UserSerializer
+        serializer = UserSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
             send_confirmation_code_on_email(
@@ -36,7 +38,7 @@ class APIToken(APIView):
     permission_classes = (AllowAny,)
 
     def post(self, request):
-        serializer = JWTTokenSerializer
+        serializer = JWTTokenSerializer(data=request.data)
         if serializer.is_valid(raise_exception=True):
             user = get_object_or_404(
                 User, username=serializer.data['username'])

@@ -7,7 +7,7 @@ from .models import FORBIDDEN_USERNAME, ROLES, User
 class UserSerializer(serializers.ModelSerializer):
     email = serializers.EmailField(
         validators=[UniqueValidator(queryset=User.objects.all())])
-    role = serializers.ChoiceField(choices=ROLES)
+    role = serializers.ChoiceField(choices=ROLES, required=False)
 
     class Meta:
         model = User
