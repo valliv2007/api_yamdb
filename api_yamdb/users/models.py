@@ -14,12 +14,16 @@ class APIUserManager(UserManager):
                 f'{FORBIDDEN_USERNAME} недопустимое имя пользователя')
         return super().create_user(username, **extra_fields)
 
+    def create_superuser(self, username, **extra_fields):
+        return super().create_superuser(username, role='admin', **extra_fields)
+
 
 class User (AbstractUser):
     bio = models.TextField('Биография', blank=True)
     role = models.CharField(
         'Роль пользователя', max_length=15, choices=ROLES, default='user')
     email = models.EmailField('E-mail', unique=True, blank=False)
+    objects = APIUserManager()
 
     class Meta:
         verbose_name = 'User'
