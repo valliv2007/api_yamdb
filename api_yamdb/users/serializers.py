@@ -1,4 +1,4 @@
-from rest_framework import serializers
+from rest_framework import exceptions, serializers
 from rest_framework.validators import UniqueValidator
 
 from .models import FORBIDDEN_USERNAME, ROLES, User
@@ -27,6 +27,6 @@ class JWTTokenSerializer(serializers.Serializer):
 
     def validate(self, data):
         if not User.objects.filter(username=data['username']).exists():
-            raise serializers.ValidationError(
+            raise exceptions.NotFound(
                 'Такого пользователя не существует')
         return data

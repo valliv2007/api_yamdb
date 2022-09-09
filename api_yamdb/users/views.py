@@ -7,15 +7,15 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import AccessToken
 
+from api_yamdb.settings import DEFAULT_FROM_EMAIL
 from .models import User
 from .serializers import JWTTokenSerializer, UserSerializer
-from api_yamdb.settings import DEFAULT_FROM_EMAIL
 
 
 def send_confirmation_code_on_email(username, email):
     user = get_object_or_404(User, username=username)
     confirmation_code = default_token_generator.make_token(user)
-    send_mail(subject='Код подтверждения для регистриции на YaMDb',
+    send_mail(subject='Confirmation code for YaMDb',
               message=f'Ваш код {confirmation_code}',
               from_email=DEFAULT_FROM_EMAIL,
               recipient_list=[email])
@@ -26,11 +26,18 @@ class SignUp(APIView):
 
     def post(self, request):
         serializer = UserSerializer(data=request.data)
+        if User.objects.filter(
+                username=serializer.initial_data.get('username'),
+                email=serializer.initial_data.get('username')).exists():
+            send_confirmation_code_on_email(
+                serializer.initial_data['username'],
+                serializer.initial_data['email'])
+            return Response(serializer.initial_data, status=status.HTTP_200_OK)
         if serializer.is_valid():
             serializer.save()
             send_confirmation_code_on_email(
                 serializer.data['username'], serializer.data['email'])
-            return Response(serializer.data, status=status.HTTP_200_OK)
+            return Response(serializer.initial_data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
