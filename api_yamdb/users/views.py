@@ -8,7 +8,6 @@ from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import AccessToken
 
 from api_yamdb.settings import DEFAULT_FROM_EMAIL
-from api.mixins import GetUpdate
 from .models import User
 from .permissions import IsAdmin
 from .serializers import AdminSerializer, JWTTokenSerializer, UserSerializer
@@ -70,9 +69,17 @@ class AdminViewSet(viewsets.ModelViewSet):
     lookup_field = 'username'
 
 
-class UserViewSet(GetUpdate):
-    serializer_class = UserSerializer
-    pagination_class = None
+class UserView(APIView):
+    def get(self, request, *args, **kwargs):
+        user = get_object_or_404(User, username=request.user.username)
+        serializer = UserSerializer(user)
+        return Response(serializer.data)
 
-    def get_queryset(self):
-        return User.objects.filter(username=self.request.user.username)
+    def patch(self, request, *args, **kwargs):
+        user = get_object_or_404(User, username=request.user.username)
+        serializer = UserSerializer(
+            user, data=request.data, partial=True, many=False)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
