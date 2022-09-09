@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from django.db.models import Avg
 from rest_framework import serializers
 
@@ -29,7 +31,9 @@ class TitlesReadSerializer(serializers.ModelSerializer):
                   'category')
 
     def get_rating(self, obj):
-        return Review.objects.aggregate(Avg('score'))
+        score = Review.objects.filter(title_id=obj.id).aggregate(Avg('score'))
+
+        return score['score__avg']
 
 
 class TitlesPostDeleteSerializer(serializers.ModelSerializer):
@@ -45,4 +49,13 @@ class TitlesPostDeleteSerializer(serializers.ModelSerializer):
                   'category')
 
     def get_rating(self, obj):
-        return Review.objects.aggregate(Avg('score'))
+        score = Review.objects.filter(title_id=obj.id).aggregate(Avg('score'))
+
+        return score['score__avg']
+
+    def validate(self, data):
+        if data['year'] > datetime.now().year:
+            raise serializers.ValidationError(
+                'Год не может быть больше текущего')
+
+        return data
