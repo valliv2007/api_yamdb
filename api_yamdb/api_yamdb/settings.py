@@ -1,3 +1,4 @@
+from datetime import timedelta
 import os
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
@@ -116,6 +117,11 @@ REST_FRAMEWORK = {
     ],
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework_simplejwt.authentication.JWTAuthentication', ], }
+
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(days=5),
+    'AUTH_HEADER_TYPES': ('Bearer',),
+}
 
 DEFAULT_FROM_EMAIL = 'webmaster@localhost'
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
