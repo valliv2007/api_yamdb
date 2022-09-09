@@ -1,10 +1,27 @@
-from rest_framework import serializers
+from rest_framework import exceptions, serializers
 from rest_framework.validators import UniqueValidator
 
 from .models import FORBIDDEN_USERNAME, ROLES, User
 
 
 class UserSerializer(serializers.ModelSerializer):
+    email = serializers.EmailField(
+        validators=[UniqueValidator(queryset=User.objects.all())])
+
+    class Meta:
+        model = User
+        fields = (
+            'username', 'email', 'first_name', 'last_name', 'bio', 'role')
+        read_only_fields = ('role',)
+
+    def validate(self, data):
+        if data.get('username') == FORBIDDEN_USERNAME:
+            raise serializers.ValidationError(
+                f'{FORBIDDEN_USERNAME} недопустимое имя пользователя')
+        return data
+
+
+class AdminSerializer(serializers.ModelSerializer):
     email = serializers.EmailField(
         validators=[UniqueValidator(queryset=User.objects.all())])
     role = serializers.ChoiceField(choices=ROLES, required=False)
@@ -15,7 +32,7 @@ class UserSerializer(serializers.ModelSerializer):
             'username', 'email', 'first_name', 'last_name', 'bio', 'role')
 
     def validate(self, data):
-        if data['username'] == FORBIDDEN_USERNAME:
+        if data.get('username') == FORBIDDEN_USERNAME:
             raise serializers.ValidationError(
                 f'{FORBIDDEN_USERNAME} недопустимое имя пользователя')
         return data
@@ -27,6 +44,6 @@ class JWTTokenSerializer(serializers.Serializer):
 
     def validate(self, data):
         if not User.objects.filter(username=data['username']).exists():
-            raise serializers.ValidationError(
+            raise exceptions.NotFound(
                 'Такого пользователя не существует')
         return data
