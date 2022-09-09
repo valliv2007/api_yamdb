@@ -111,6 +111,9 @@ class Review(models.Model):
         verbose_name = "Review"
         verbose_name_plural = 'Reviews'
 
+    def __str__(self):
+        return self.text[:20]
+
 
 class Comment(models.Model):
     """Комментарий к отзыву произведения"""
@@ -135,3 +138,6 @@ class Comment(models.Model):
     class Meta:
         verbose_name = "Comment"
         verbose_name_plural = 'Comments'
+
+    def __str__(self):
+        return self.text[:20]
