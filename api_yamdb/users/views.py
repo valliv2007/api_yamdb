@@ -8,8 +8,8 @@ from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import AccessToken
 
 from api_yamdb.settings import DEFAULT_FROM_EMAIL
+from api.permissions import IsAdmin
 from .models import User
-from .permissions import IsAdmin
 from .serializers import AdminSerializer, JWTTokenSerializer, UserSerializer
 
 
@@ -29,7 +29,7 @@ class SignUp(APIView):
         serializer = UserSerializer(data=request.data)
         if User.objects.filter(
                 username=serializer.initial_data.get('username'),
-                email=serializer.initial_data.get('username')).exists():
+                email=serializer.initial_data.get('email')).exists():
             send_confirmation_code_on_email(
                 serializer.initial_data['username'],
                 serializer.initial_data['email'])
