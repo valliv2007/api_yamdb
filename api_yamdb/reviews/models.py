@@ -4,7 +4,7 @@ from django.db import models
 from users.models import User
 
 
-class Category(models.Model):
+    class Category(models.Model):
     """Модель категорий для произведений"""
 
     name = models.CharField(verbose_name='Категория', max_length=64)
