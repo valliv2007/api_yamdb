@@ -14,7 +14,7 @@ class APIUserManager(UserManager):
                 f'{FORBIDDEN_USERNAME} недопустимое имя пользователя')
         return super().create_user(username, **extra_fields)
 
-    def create_superuser(self, username, **extra_fields):
+    def create_superuser(self, username, role='admin', **extra_fields):
         return super().create_superuser(username, role='admin', **extra_fields)
 
 

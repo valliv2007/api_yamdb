@@ -1,15 +1,17 @@
 from django.contrib.auth.tokens import default_token_generator
 from django.core.mail import send_mail
 from django.shortcuts import get_object_or_404
-from rest_framework import status
+from rest_framework import filters, status, viewsets
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import AccessToken
 
 from api_yamdb.settings import DEFAULT_FROM_EMAIL
+from api.mixins import GetUpdate
 from .models import User
-from .serializers import JWTTokenSerializer, UserSerializer
+from .permissions import IsAdmin
+from .serializers import AdminSerializer, JWTTokenSerializer, UserSerializer
 
 
 def send_confirmation_code_on_email(username, email):
@@ -57,3 +59,20 @@ class APIToken(APIView):
                     {'token': str(token)}, status=status.HTTP_200_OK)
             return Response(
                 serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class AdminViewSet(viewsets.ModelViewSet):
+    queryset = User.objects.all()
+    serializer_class = AdminSerializer
+    permission_classes = (IsAdmin,)
+    filter_backends = (filters.SearchFilter,)
+    search_fields = ('username',)
+    lookup_field = 'username'
+
+
+class UserViewSet(GetUpdate):
+    serializer_class = UserSerializer
+    pagination_class = None
+
+    def get_queryset(self):
+        return User.objects.filter(username=self.request.user.username)
