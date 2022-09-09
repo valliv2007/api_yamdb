@@ -4,10 +4,23 @@ from django.db import models
 from users.models import User
 
 
-    class Category(models.Model):
+class Genre(models.Model):
+    """Модель жанров"""
+    name = models.CharField(verbose_name='Жанр', max_length=256)
+    slug = models.SlugField(verbose_name='Адрес страницы жанра', unique=True)
+
+    class Meta:
+        verbose_name = 'Genre'
+        verbose_name_plural = 'Genres'
+
+    def __str__(self):
+        return self.name
+
+
+class Category(models.Model):
     """Модель категорий для произведений"""
 
-    name = models.CharField(verbose_name='Категория', max_length=64)
+    name = models.CharField(verbose_name='Категория', max_length=256)
     slug = models.SlugField(
         verbose_name='Адрес страницы категории',
         unique=True,
@@ -24,7 +37,7 @@ from users.models import User
 class Titles(models.Model):
     """Модель произведений"""
 
-    name = models.CharField(verbose_name='Произведение', max_length=64)
+    name = models.CharField(verbose_name='Произведение', max_length=256)
     year = models.IntegerField(verbose_name='Год',)
     description = models.TextField(
         verbose_name='Описание',
@@ -38,23 +51,11 @@ class Titles(models.Model):
         verbose_name='Категория',
         null=True,
     )
+    genre = models.ManyToManyField(Genre, through='GenreTitle')
 
     class Meta:
         verbose_name = 'Title'
         verbose_name_plural = 'Titles'
-
-    def __str__(self):
-        return self.name
-
-
-class Genre(models.Model):
-    """Модель жанров"""
-    name = models.CharField(verbose_name='Жанр', max_length=64)
-    slug = models.SlugField(verbose_name='Адрес страницы жанра', unique=True)
-
-    class Meta:
-        verbose_name = 'Genre'
-        verbose_name_plural = 'Genres'
 
     def __str__(self):
         return self.name
@@ -110,9 +111,6 @@ class Review(models.Model):
         verbose_name = "Review"
         verbose_name_plural = 'Reviews'
 
-    def __str__(self):
-        return self.text[:15]
-
 
 class Comment(models.Model):
     """Комментарий к отзыву произведения"""
@@ -137,6 +135,3 @@ class Comment(models.Model):
     class Meta:
         verbose_name = "Comment"
         verbose_name_plural = 'Comments'
-
-    def __str__(self):
-        return self.text[:15]
