@@ -3,10 +3,11 @@ from datetime import datetime
 from django.db.models import Avg
 from rest_framework import serializers
 
-from reviews.models import Titles, Genre, Category, Review
+from reviews.models import Category, Genre, Review, Titles
 
 
 class CategorySerializer(serializers.ModelSerializer):
+    """Сериалайзер для категорий"""
 
     class Meta:
         model = Category
@@ -14,6 +15,7 @@ class CategorySerializer(serializers.ModelSerializer):
 
 
 class GenreSerializer(serializers.ModelSerializer):
+    """Сериалайзер для жанров"""
 
     class Meta:
         model = Genre
@@ -21,6 +23,8 @@ class GenreSerializer(serializers.ModelSerializer):
 
 
 class TitlesReadSerializer(serializers.ModelSerializer):
+    """Сериалайзер для получения произведений"""
+
     category = CategorySerializer()
     genre = GenreSerializer(many=True)
     rating = serializers.SerializerMethodField(read_only=True)
@@ -31,12 +35,15 @@ class TitlesReadSerializer(serializers.ModelSerializer):
                   'category')
 
     def get_rating(self, obj):
+        """Метод для вычисления рейтинга"""
         score = Review.objects.filter(title_id=obj.id).aggregate(Avg('score'))
 
         return score['score__avg']
 
 
 class TitlesPostDeleteSerializer(serializers.ModelSerializer):
+    """Сериалайзер для публикации и удаления произведений"""
+
     category = serializers.SlugRelatedField(
         queryset=Category.objects.all(), slug_field='slug')
     genre = serializers.SlugRelatedField(
@@ -49,12 +56,14 @@ class TitlesPostDeleteSerializer(serializers.ModelSerializer):
                   'category')
 
     def get_rating(self, obj):
+        """Метод для вычисления рейтинга"""
         score = Review.objects.filter(title_id=obj.id).aggregate(Avg('score'))
 
         return score['score__avg']
 
     def validate(self, data):
-        if data['year'] > datetime.now().year:
+        """Метод для валидации года"""
+        if int(data.get('year') or 0) > datetime.now().year:
             raise serializers.ValidationError(
                 'Год не может быть больше текущего')
 
