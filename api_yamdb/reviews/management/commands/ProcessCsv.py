@@ -21,7 +21,7 @@ DATA_PATCH = {
 
 class Command(BaseCommand):
     def handle(self, *args, **options):
-        for row in DictReader(open(DATA_PATCH['users'])):
+        for row in DictReader(open(DATA_PATCH['users'], encoding='utf-8')):
             user = User(
                 id=row['id'],
                 username=row['username'],
@@ -35,7 +35,7 @@ class Command(BaseCommand):
 
         print('Данные user загружены')
 
-        for row in DictReader(open(DATA_PATCH['category'])):
+        for row in DictReader(open(DATA_PATCH['category'], encoding='utf-8')):
             category = Category(
                 id=row['id'],
                 name=row['name'],
@@ -45,7 +45,7 @@ class Command(BaseCommand):
 
         print('Данные category загружены')
 
-        for row in DictReader(open(DATA_PATCH['genre'])):
+        for row in DictReader(open(DATA_PATCH['genre'], encoding='utf-8')):
             genre = Genre(
                 id=row['id'],
                 name=row['name'],
@@ -55,7 +55,7 @@ class Command(BaseCommand):
 
         print('Данные genre загружены')
 
-        for row in DictReader(open(DATA_PATCH['titles'])):
+        for row in DictReader(open(DATA_PATCH['titles'], encoding='utf-8')):
             title = Titles(
                 id=row['id'],
                 name=row['name'],
@@ -66,7 +66,8 @@ class Command(BaseCommand):
 
         print('Данные title загружены')
 
-        for row in DictReader(open(DATA_PATCH['genre_title'])):
+        for row in DictReader(
+                open(DATA_PATCH['genre_title'], encoding='utf-8')):
             genre_title = GenreTitle(
                 id=row['id'],
                 title_id=row['title_id'],
@@ -76,7 +77,7 @@ class Command(BaseCommand):
 
         print('Данные genre_title загружены')
 
-        for row in DictReader(open(DATA_PATCH['review'])):
+        for row in DictReader(open(DATA_PATCH['review'], encoding='utf-8')):
             review = Review(
                 id=row['id'],
                 title_id=row['title_id'],
@@ -89,7 +90,7 @@ class Command(BaseCommand):
 
         print('Данные review загружены')
 
-        for row in DictReader(open(DATA_PATCH['comments'])):
+        for row in DictReader(open(DATA_PATCH['comments'], encoding='utf-8')):
             comments = Comment(
                 id=row['id'],
                 review_id=row['review_id'],

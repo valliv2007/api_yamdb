@@ -1,10 +1,7 @@
 # Проект API YAMDB
 
 ### Описание проекта:
-В проекте Yamdb можно оставить отзыв на произведения («Книги», «Фильмы», «Музыка» и пр.). Отзывы состоят из текстовой заметки и оценки от 1 до 10. Из оценок складывается рейтинг. Произведения можно отфильтровать по категориям, либо по жанру.
-
-### Описание проекта:
-Сайт Yatube - это соцсеть, где можно делать публикации на различные темы. Подписываться на авторов, а так же оставлять комментарии. Это API для сайта. 
+В проекте Yamdb можно оставить отзыв на произведения ("Книги", "Фильмы", "Музыка" и пр.). Отзывы состоят из текстовой заметки и оценки от 1 до 10. Рейтинг складывается из оценок. Произведения можно отфильтровать по категориям, либо по жанру.
 
 ### Как запустить проект:
 
@@ -45,7 +42,6 @@ python manage.py migrate
 ```sh
 python manage.py runserver
 ```
-
 ### Примеры запросов API к сайту
 Запрос:
 ```
@@ -86,33 +82,33 @@ POST http://127.0.0.1:8000/api/v1/titles/
 ```
 ```sh
 {
-"name": "string",
-"year": 0,
-"description": "string",
-"genre": [
-    "string"
-],
-"category": "string"
+    "name": "string",
+    "year": 0,
+    "description": "string",
+    "genre": [
+        "string"
+    ],
+    "category": "string"
 }
 ```
 Ответ: 
 ```sh
 {
-"id": 0,
-"name": "string",
-"year": 0,
-"rating": 0,
-"description": "string",
-"genre": [
-    {
+    "id": 0,
+    "name": "string",
+    "year": 0,
+    "rating": 0,
+    "description": "string",
+    "genre": [
+        {
+            "name": "string",
+            "slug": "string"
+        }
+    ],
+    "category": {
         "name": "string",
         "slug": "string"
-    }
-],
-"category": {
-    "name": "string",
-    "slug": "string"
-    }
+        }
 }
 ```
 
@@ -144,12 +140,12 @@ POST http://127.0.0.1:8000/api/v1/titles/{title_id}/reviews/
 ```
 ```sh
 {
-"text": "string",
-"score": 1
+    "text": "string",
+    "score": 1
 }
 ``` 
 
 ### Над проектом работали
-- Снежко Илья *(Тимлид)*
-- Авров Александр
-- Мишанькин Алексей
+- Snezhko Ilya *(Teamlead)*
+- Avrov Alexander
+- Mishankin Alexey
