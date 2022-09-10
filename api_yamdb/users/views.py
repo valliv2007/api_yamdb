@@ -1,3 +1,4 @@
+from api.permissions import IsAdmin
 from django.contrib.auth.tokens import default_token_generator
 from django.core.mail import send_mail
 from django.shortcuts import get_object_or_404
@@ -8,7 +9,6 @@ from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import AccessToken
 
 from api_yamdb.settings import DEFAULT_FROM_EMAIL
-from api.permissions import IsAdmin
 from .models import User
 from .serializers import AdminSerializer, JWTTokenSerializer, UserSerializer
 
@@ -23,6 +23,8 @@ def send_confirmation_code_on_email(username, email):
 
 
 class SignUp(APIView):
+    """Вьюкласс для регистрации пользователей"""
+
     permission_classes = (AllowAny,)
 
     def post(self, request):
@@ -43,6 +45,8 @@ class SignUp(APIView):
 
 
 class APIToken(APIView):
+    """Вьюкласс для получения токена"""
+
     permission_classes = (AllowAny,)
 
     def post(self, request):
@@ -61,6 +65,8 @@ class APIToken(APIView):
 
 
 class AdminViewSet(viewsets.ModelViewSet):
+    """Вьюсет для работы админа с пользователями"""
+
     queryset = User.objects.all()
     serializer_class = AdminSerializer
     permission_classes = (IsAdmin,)
@@ -70,6 +76,8 @@ class AdminViewSet(viewsets.ModelViewSet):
 
 
 class UserView(APIView):
+    """Вьюкласс для просмотра и изменения данных своей учетной записи"""
+
     def get(self, request, *args, **kwargs):
         user = get_object_or_404(User, username=request.user.username)
         serializer = UserSerializer(user)

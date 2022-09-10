@@ -5,6 +5,8 @@ from .models import FORBIDDEN_USERNAME, ROLES, User
 
 
 class UserSerializer(serializers.ModelSerializer):
+    """Сериалайзер для пользователей"""
+
     email = serializers.EmailField(
         validators=[UniqueValidator(queryset=User.objects.all())])
 
@@ -22,6 +24,8 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class AdminSerializer(serializers.ModelSerializer):
+    """Сериалайзер для админа"""
+
     email = serializers.EmailField(
         validators=[UniqueValidator(queryset=User.objects.all())])
     role = serializers.ChoiceField(choices=ROLES, required=False)
@@ -39,6 +43,8 @@ class AdminSerializer(serializers.ModelSerializer):
 
 
 class JWTTokenSerializer(serializers.Serializer):
+    """Сериалайзер для получения токена"""
+
     username = serializers.CharField(max_length=150)
     confirmation_code = serializers.CharField()
 

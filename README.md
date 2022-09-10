@@ -22,7 +22,7 @@ python -m venv venv
 ```
 
 ```sh
-source venv/bin/activate
+source venv/bin/activate or source venv/Scripts/activate
 ```
 
 Установить зависимости из файла requirements.txt:
@@ -42,109 +42,25 @@ python manage.py migrate
 ```sh
 python manage.py runserver
 ```
+## Документация по запросам
+см. yatube_api/static/redoc.yaml  или после запуска на localhost по ссылке http://127.0.0.1:8000/redoc/
 ### Примеры запросов API к сайту
-Запрос:
-```
-GET http://127.0.0.1:8000/api/v1/titles/
-```
-Ответ: 
-```sh
-[
-  {
-    "count": 0,
-    "next": "string",
-    "previous": "string",
-    "results": [
-      {
-        "id": 0,
-        "name": "string",
-        "year": 0,
-        "rating": 0,
-        "description": "string",
-        "genre": [
-          {
-            "name": "string",
-            "slug": "string"
-          }
-        ],
-        "category": {
-          "name": "string",
-          "slug": "string"
-        }
-      }
-    ]
-  }
-]
-```
-Запрос:
-```
-POST http://127.0.0.1:8000/api/v1/titles/
-```
-```sh
-{
-    "name": "string",
-    "year": 0,
-    "description": "string",
-    "genre": [
-        "string"
-    ],
-    "category": "string"
-}
-```
-Ответ: 
-```sh
-{
-    "id": 0,
-    "name": "string",
-    "year": 0,
-    "rating": 0,
-    "description": "string",
-    "genre": [
-        {
-            "name": "string",
-            "slug": "string"
-        }
-    ],
-    "category": {
-        "name": "string",
-        "slug": "string"
-        }
-}
-```
 
-Запрос:
-```
-http://127.0.0.1:8000/api/v1/titles/{title_id}/reviews/
-```
-```sh
-[
-  {
-    "count": 0,
-    "next": "string",
-    "previous": "string",
-    "results": [
-      {
-        "id": 0,
-        "text": "string",
-        "author": "string",
-        "score": 1,
-        "pub_date": "2019-08-24T14:15:22Z"
-      }
-    ]
-  }
-]
-```
-Запрос: 
-```
-POST http://127.0.0.1:8000/api/v1/titles/{title_id}/reviews/
-```
-```sh
-{
-    "text": "string",
-    "score": 1
-}
-``` 
-
+- path: /api/v1/titles/   методы: для всех пользователей - GET(просмотр списка произведений), для администратора - POST (публикация произведения, обязательные поля: name, year, genre(list), category)
+- path: /api/v1/titles/{id}/ методы: для всех пользователей - GET (просмотр произведения), для администратора:  PATCH, DELETE (изменение или удаление произведения)
+- path: /api/v1/titles/{title_id}/reviews/ методы: для всех пользователей - GET (просмотр списка отзывов к произведению), для авторизованных пользователей - POST (публикация отзывов и оценок, обязательное поле: text, score) 
+- path: /api/v1/titles/{title_id}/reviews/{review_id}/ методы: для всех пользователей - GET (просмотр отзыва), для автора контента, администратора и модератора: PATCH, DELETE (изменение или удаление отзыва)
+- path: /api/v1/titles/{title_id}/reviews/{review_id}/comments/ методы: для всех пользователей - GET (просмотр списка комментариев к отзыву на произведение), для авторизованных пользователей - POST (публикация комментария, обязательное поле: text) 
+- path: /api/v1/titles/{title_id}/reviews/{review_id}/comments/{comments_id}/ методы: для всех пользователей - GET (просмотр комментария), для автора контента, администратора и модератора: PATCH, DELETE (изменение или удаление комментария)
+- path: /api/v1/categories/ методы: для всех пользователей - GET(просмотр списка категорий), для администратора - POST (создание категории, обязательные поля: name, slug)
+- path: /api/v1/categories/{slug} методы: для администратора:  DELETE(удаление категории)
+- path: /api/v1/genres/ методы: для всех пользователей - GET(просмотр списка жанров), для администратора - POST (создание жанра, обязательные поля: name, slug)
+- path: /api/v1/genres/{slug} методы: для администратора:  DELETE(удаление жанра)
+- path: /api/v1/auth/signup/ методы: для всех пользователей - POST(регистрация пользователя и отправка кода подтверждения обязательные поля: username, email)
+- path: /api/v1/auth/token/ методы: для всех пользователей - POST(получение JWT токена, обязательные поля: username, confirmation_code)
+- path: /api/v1/users/ методы: для администратора - GET(просмотр списка пользователей),POST (создание пользователя, обязательные поля: username, email))
+- path: /api/v1/users//{username}/ методы: для администратора - GET(просмотр пользователя), PATCH, DELETE (изменение или удаление пользователя)
+- path: /api/v1/users/me методы: для авторизованных пользователей - GET(просмотр данных свой учетной записи),PATCH (изменение данных свой учетной записи)
 ### Над проектом работали
 - Snezhko Ilya *(Teamlead)*
 - Avrov Alexander

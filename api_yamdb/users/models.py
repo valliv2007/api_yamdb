@@ -8,6 +8,8 @@ FORBIDDEN_USERNAME = 'me'
 
 
 class APIUserManager(UserManager):
+    """Модель управления созданием пользователей"""
+
     def create_user(self, username, **extra_fields):
         if username == FORBIDDEN_USERNAME:
             raise ValueError(
@@ -19,6 +21,8 @@ class APIUserManager(UserManager):
 
 
 class User (AbstractUser):
+    """Модель прользователей"""
+
     bio = models.TextField('Биография', blank=True)
     role = models.CharField(
         'Роль пользователя', max_length=15, choices=ROLES, default='user')
