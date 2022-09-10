@@ -2,7 +2,7 @@ from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters, viewsets
 
-from reviews.models import Category, Genre, Titles, Review
+from reviews.models import Category, Genre, Title, Review
 from .filters import TitlesFilter
 from .mixins import GetPostDeleteViewSet
 from .permissions import AdminOrReadOnly, ReviewAndComment
@@ -14,7 +14,7 @@ from .serializers import (CategorySerializer, GenreSerializer,
 class TitlesViewSet(viewsets.ModelViewSet):
     """Вьюсет для произведений"""
 
-    queryset = Titles.objects.all()
+    queryset = Title.objects.all()
     permission_classes = (AdminOrReadOnly,)
     filter_backends = (DjangoFilterBackend,)
     filterset_class = TitlesFilter
@@ -56,12 +56,12 @@ class ReviewViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         title_id = self.kwargs.get("title_id")
-        title = get_object_or_404(Titles, id=title_id)
+        title = get_object_or_404(Title, id=title_id)
         return title.reviews.all()
 
     def perform_create(self, serializer):
         title_id = self.kwargs.get("title_id")
-        title = get_object_or_404(Titles, id=title_id)
+        title = get_object_or_404(Title, id=title_id)
         serializer.save(author=self.request.user, title=title)
 
 

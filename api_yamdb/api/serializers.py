@@ -3,7 +3,7 @@ from datetime import datetime
 from django.db.models import Avg
 from rest_framework import serializers
 
-from reviews.models import Category, Genre, Titles, Review, Comment
+from reviews.models import Category, Genre, Title, Review, Comment
 
 
 class CategorySerializer(serializers.ModelSerializer):
@@ -30,7 +30,7 @@ class TitlesReadSerializer(serializers.ModelSerializer):
     rating = serializers.SerializerMethodField(read_only=True)
 
     class Meta:
-        model = Titles
+        model = Title
         fields = ('id', 'name', 'year', 'rating', 'description', 'genre',
                   'category')
 
@@ -52,7 +52,7 @@ class TitlesPostDeleteSerializer(serializers.ModelSerializer):
     rating = serializers.SerializerMethodField(read_only=True)
 
     class Meta:
-        model = Titles
+        model = Title
         fields = ('id', 'name', 'year', 'rating', 'description', 'genre',
                   'category')
 
@@ -72,6 +72,8 @@ class TitlesPostDeleteSerializer(serializers.ModelSerializer):
 
 
 class ReviewSerializer(serializers.ModelSerializer):
+    """Сериалайзер для отзывов"""
+
     author = serializers.SlugRelatedField(
         read_only=True, slug_field='username'
     )
@@ -95,6 +97,8 @@ class ReviewSerializer(serializers.ModelSerializer):
 
 
 class CommentSerializer(serializers.ModelSerializer):
+    """Сериалайзер для комментариев к отзывам"""
+
     author = serializers.SlugRelatedField(
         read_only=True, slug_field='username'
     )

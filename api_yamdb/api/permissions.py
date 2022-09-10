@@ -2,6 +2,7 @@ from rest_framework import permissions
 
 
 class AdminOrReadOnly(permissions.BasePermission):
+    """Пермишн для чтения, либо для админа"""
 
     def has_permission(self, request, view):
         return (
@@ -11,6 +12,7 @@ class AdminOrReadOnly(permissions.BasePermission):
 
 
 class ReviewAndComment(permissions.BasePermission):
+    """Пермишн отзывов и комментариев"""
 
     def has_permission(self, request, view):
         return bool(
