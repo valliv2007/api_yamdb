@@ -1,8 +1,8 @@
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters, viewsets
-
 from reviews.models import Category, Genre, Review, Title
+
 from .filters import TitlesFilter
 from .mixins import GetPostDeleteViewSet
 from .permissions import AdminOrReadOnly, ReviewAndComment
