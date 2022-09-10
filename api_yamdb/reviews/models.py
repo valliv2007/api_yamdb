@@ -34,7 +34,7 @@ class Category(models.Model):
         return self.name
 
 
-class Titles(models.Model):
+class Title(models.Model):
     """Модель произведений"""
 
     name = models.CharField(verbose_name='Произведение', max_length=256)
@@ -65,7 +65,7 @@ class GenreTitle(models.Model):
     """Модель взаимосвязи жанров и произведений"""
 
     genre = models.ForeignKey(Genre, on_delete=models.CASCADE)
-    title = models.ForeignKey(Titles, on_delete=models.CASCADE)
+    title = models.ForeignKey(Title, on_delete=models.CASCADE)
 
     class Meta:
         verbose_name = 'Genre title'
@@ -85,7 +85,7 @@ class Review(models.Model):
         verbose_name="Автор",
     )
     title = models.ForeignKey(
-        Titles,
+        Title,
         on_delete=models.CASCADE,
         related_name="reviews",
         verbose_name="Описание",
