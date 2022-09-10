@@ -2,13 +2,13 @@ from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters, viewsets
 
-from reviews.models import Category, Genre, Title, Review
+from reviews.models import Category, Genre, Review, Title
 from .filters import TitlesFilter
 from .mixins import GetPostDeleteViewSet
 from .permissions import AdminOrReadOnly, ReviewAndComment
-from .serializers import (CategorySerializer, GenreSerializer,
-                          TitlesPostDeleteSerializer, TitlesReadSerializer,
-                          CommentSerializer, ReviewSerializer)
+from .serializers import (CategorySerializer, CommentSerializer,
+                          GenreSerializer, ReviewSerializer,
+                          TitlesPostDeleteSerializer, TitlesReadSerializer)
 
 
 class TitlesViewSet(viewsets.ModelViewSet):
