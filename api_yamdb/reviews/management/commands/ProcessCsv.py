@@ -2,10 +2,8 @@ import os
 from csv import DictReader
 
 from django.core.management import BaseCommand
-from reviews.models import (Category, Titles, Genre, GenreTitle, Review,
-                            Comment)
+from reviews.models import Category, Comment, Genre, GenreTitle, Review, Titles
 from users.models import User
-
 
 DATA_DIR = 'static/data'
 DATA_PATCH = {
@@ -20,6 +18,8 @@ DATA_PATCH = {
 
 
 class Command(BaseCommand):
+    """ Команда для загрузки данных в БД"""
+
     def handle(self, *args, **options):
         for row in DictReader(open(DATA_PATCH['users'], encoding='utf-8')):
             user = User(

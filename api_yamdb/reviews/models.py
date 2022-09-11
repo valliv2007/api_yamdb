@@ -1,11 +1,11 @@
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
-
 from users.models import User
 
 
 class Genre(models.Model):
     """Модель жанров"""
+
     name = models.CharField(verbose_name='Жанр', max_length=256)
     slug = models.SlugField(verbose_name='Адрес страницы жанра', unique=True)
 
