@@ -1,7 +1,7 @@
 from datetime import datetime
 
-from django.db.models import Avg
 from rest_framework import serializers
+
 from reviews.models import Category, Comment, Genre, Review, Title
 
 
@@ -26,19 +26,12 @@ class TitlesReadSerializer(serializers.ModelSerializer):
 
     category = CategorySerializer()
     genre = GenreSerializer(many=True)
-    rating = serializers.SerializerMethodField(read_only=True)
+    rating = serializers.FloatField(read_only=True, allow_null=True)
 
     class Meta:
         model = Title
         fields = ('id', 'name', 'year', 'rating', 'description', 'genre',
                   'category')
-
-    def get_rating(self, obj):
-        """Метод для вычисления рейтинга"""
-        score = obj.reviews.aggregate(Avg('score')).get('score__avg')
-        if score is None:
-            return score
-        return round(score, 1)
 
 
 class TitlesPostDeleteSerializer(serializers.ModelSerializer):
@@ -48,19 +41,12 @@ class TitlesPostDeleteSerializer(serializers.ModelSerializer):
         queryset=Category.objects.all(), slug_field='slug')
     genre = serializers.SlugRelatedField(
         many=True, queryset=Genre.objects.all(), slug_field='slug')
-    rating = serializers.SerializerMethodField(read_only=True)
+    rating = serializers.FloatField(read_only=True, allow_null=True)
 
     class Meta:
         model = Title
         fields = ('id', 'name', 'year', 'rating', 'description', 'genre',
                   'category')
-
-    def get_rating(self, obj):
-        """Метод для вычисления рейтинга"""
-        score = obj.reviews.aggregate(Avg('score')).get('score__avg')
-        if score is None:
-            return score
-        return round(score, 1)
 
     def validate(self, data):
         """Метод для валидации года"""
