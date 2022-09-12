@@ -3,8 +3,8 @@ import os.path
 from csv import DictReader
 
 from django.core.management import BaseCommand
-from reviews.models import Category, Comment, Genre, GenreTitle, Review, Title
 
+from reviews.models import Category, Comment, Genre, GenreTitle, Review, Title
 from users.models import User
 
 DATA_DIR = 'static/data'
@@ -38,7 +38,6 @@ class Command(BaseCommand):
             user.save()
 
         logging.info('База user загружена')
-
 
         for row in DictReader(open(DATA_PATCH['category'], encoding='utf-8')):
             category = Category(
