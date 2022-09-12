@@ -16,8 +16,9 @@ class APIUserManager(UserManager):
                 f'{FORBIDDEN_USERNAME} недопустимое имя пользователя')
         return super().create_user(username, **extra_fields)
 
-    def create_superuser(self, username, role='admin', **extra_fields):
-        return super().create_superuser(username, role='admin', **extra_fields)
+    def create_superuser(self, username, role=ROLES[2][0], **extra_fields):
+        return super().create_superuser(
+            username, role=ROLES[2][0], **extra_fields)
 
 
 class User (AbstractUser):
@@ -25,10 +26,18 @@ class User (AbstractUser):
 
     bio = models.TextField('Биография', blank=True)
     role = models.CharField(
-        'Роль пользователя', max_length=15, choices=ROLES, default='user')
+        'Роль пользователя', max_length=15, choices=ROLES, default=ROLES[0][0])
     email = models.EmailField('E-mail', unique=True, blank=False)
     objects = APIUserManager()
 
     class Meta:
         verbose_name = 'User'
         verbose_name_plural = 'Users'
+
+    @property
+    def is_admin(self):
+        return self.role == ROLES[2][0]
+
+    @property
+    def is_moderator(self):
+        return self.role == ROLES[1][0]
