@@ -1,8 +1,10 @@
+from django.db.models import Avg
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters, viewsets
-from reviews.models import Category, Genre, Review, Title
+from rest_framework.permissions import IsAuthenticatedOrReadOnly
 
+from reviews.models import Category, Genre, Review, Title
 from .filters import TitlesFilter
 from .mixins import GetPostDeleteViewSet
 from .permissions import AdminOrReadOnly, ReviewAndComment
@@ -14,7 +16,9 @@ from .serializers import (CategorySerializer, CommentSerializer,
 class TitlesViewSet(viewsets.ModelViewSet):
     """Вьюсет для произведений"""
 
-    queryset = Title.objects.all()
+    queryset = Title.objects.all().annotate(
+        rating=Avg('reviews__score'),
+    ).order_by('id')
     permission_classes = (AdminOrReadOnly,)
     filter_backends = (DjangoFilterBackend,)
     filterset_class = TitlesFilter
@@ -52,15 +56,15 @@ class ReviewViewSet(viewsets.ModelViewSet):
     """Вьюсет для обзоров"""
 
     serializer_class = ReviewSerializer
-    permission_classes = (ReviewAndComment,)
+    permission_classes = (IsAuthenticatedOrReadOnly, ReviewAndComment)
 
     def get_queryset(self):
-        title_id = self.kwargs.get("title_id")
+        title_id = self.kwargs.get('title_id')
         title = get_object_or_404(Title, id=title_id)
         return title.reviews.all()
 
     def perform_create(self, serializer):
-        title_id = self.kwargs.get("title_id")
+        title_id = self.kwargs.get('title_id')
         title = get_object_or_404(Title, id=title_id)
         serializer.save(author=self.request.user, title=title)
 
@@ -69,7 +73,7 @@ class CommentViewSet(viewsets.ModelViewSet):
     """Вьюсет для комментариев"""
 
     serializer_class = CommentSerializer
-    permission_classes = (ReviewAndComment,)
+    permission_classes = (IsAuthenticatedOrReadOnly, ReviewAndComment)
 
     def get_queryset(self):
         title_id = self.kwargs.get('title_id')

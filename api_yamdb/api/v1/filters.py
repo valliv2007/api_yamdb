@@ -1,4 +1,5 @@
 import django_filters
+
 from reviews.models import Title
 
 
@@ -15,4 +16,4 @@ class TitlesFilter(django_filters.FilterSet):
 
     class Meta:
         model = Title
-        fields = ['name', 'year', 'category', 'genre']
+        fields = ('name', 'year', 'category', 'genre')
