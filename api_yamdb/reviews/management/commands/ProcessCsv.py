@@ -1,8 +1,10 @@
-import os
+import logging
+import os.path
 from csv import DictReader
 
 from django.core.management import BaseCommand
-from reviews.models import Category, Comment, Genre, GenreTitle, Review, Titles
+from reviews.models import Category, Comment, Genre, GenreTitle, Review, Title
+
 from users.models import User
 
 DATA_DIR = 'static/data'
@@ -15,6 +17,8 @@ DATA_PATCH = {
     'review': os.path.join(DATA_DIR, 'review.csv'),
     'comments': os.path.join(DATA_DIR, 'comments.csv'),
 }
+
+logging.getLogger().setLevel(logging.INFO)
 
 
 class Command(BaseCommand):
@@ -33,7 +37,8 @@ class Command(BaseCommand):
             )
             user.save()
 
-        print('Данные user загружены')
+        logging.info('База user загружена')
+
 
         for row in DictReader(open(DATA_PATCH['category'], encoding='utf-8')):
             category = Category(
@@ -43,7 +48,7 @@ class Command(BaseCommand):
             )
             category.save()
 
-        print('Данные category загружены')
+        logging.info('База category загружена')
 
         for row in DictReader(open(DATA_PATCH['genre'], encoding='utf-8')):
             genre = Genre(
@@ -53,10 +58,10 @@ class Command(BaseCommand):
             )
             genre.save()
 
-        print('Данные genre загружены')
+        logging.info('База genre загружена')
 
         for row in DictReader(open(DATA_PATCH['titles'], encoding='utf-8')):
-            title = Titles(
+            title = Title(
                 id=row['id'],
                 name=row['name'],
                 year=row['year'],
@@ -64,7 +69,7 @@ class Command(BaseCommand):
             )
             title.save()
 
-        print('Данные title загружены')
+        logging.info('База title загружена')
 
         for row in DictReader(
                 open(DATA_PATCH['genre_title'], encoding='utf-8')):
@@ -75,7 +80,7 @@ class Command(BaseCommand):
             )
             genre_title.save()
 
-        print('Данные genre_title загружены')
+        logging.info('База genre_title загружена')
 
         for row in DictReader(open(DATA_PATCH['review'], encoding='utf-8')):
             review = Review(
@@ -88,7 +93,7 @@ class Command(BaseCommand):
             )
             review.save()
 
-        print('Данные review загружены')
+        logging.info('База review загружена')
 
         for row in DictReader(open(DATA_PATCH['comments'], encoding='utf-8')):
             comments = Comment(
@@ -100,4 +105,4 @@ class Command(BaseCommand):
             )
             comments.save()
 
-        print('Данные comments загружены')
+        logging.info('База comments загружена')
