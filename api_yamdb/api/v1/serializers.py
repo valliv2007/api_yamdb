@@ -4,6 +4,9 @@ from rest_framework import serializers
 
 from reviews.models import Category, Comment, Genre, Review, Title
 
+MAX_SCORE = 10
+MIN_SCORE = 1
+
 
 class CategorySerializer(serializers.ModelSerializer):
     """Сериалайзер для категорий"""
@@ -62,7 +65,6 @@ class ReviewSerializer(serializers.ModelSerializer):
     author = serializers.SlugRelatedField(
         read_only=True, slug_field='username'
     )
-    score = serializers.IntegerField(required=True)
 
     class Meta:
         model = Review
@@ -81,7 +83,7 @@ class ReviewSerializer(serializers.ModelSerializer):
         return data
 
     def validate_score(self, data):
-        if data > 10 or data < 0:
+        if MAX_SCORE < data < MIN_SCORE:
             raise serializers.ValidationError(
                 'Оценка должна быть от 1 до 10'
             )
@@ -98,4 +100,4 @@ class CommentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Comment
         fields = ('id', 'text', 'author', 'pub_date')
-        read_only_fields = ('id', 'author')
+        read_only_fields = ('id',)
