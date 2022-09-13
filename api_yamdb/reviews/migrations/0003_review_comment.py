@@ -10,7 +10,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ('reviews', '0002_auto_20220906_2024'),
+        ('reviews', '0002_changed_category_field'),
     ]
 
     operations = [
