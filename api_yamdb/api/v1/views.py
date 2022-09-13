@@ -145,7 +145,8 @@ class APIToken(APIView):
                 return Response(
                     {'token': str(token)}, status=status.HTTP_200_OK)
             return Response(
-                serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+                {'confirmation_code': 'Неверный код подтверждения'},
+                status=status.HTTP_400_BAD_REQUEST)
 
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -164,10 +165,8 @@ class UserViewSet(viewsets.ModelViewSet):
         if request.method == 'PATCH':
             serializer = UserSerializer(
                 request.user, data=request.data, partial=True, many=False)
-            if serializer.is_valid():
+            if serializer.is_valid(raise_exception=True):
                 serializer.save()
                 return Response(serializer.data, status=status.HTTP_200_OK)
-            return Response(
-                serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         serializer = UserSerializer(request.user)
         return Response(serializer.data, status=status.HTTP_200_OK)
