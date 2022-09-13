@@ -1,9 +1,8 @@
 from django.urls import include, path
 from rest_framework import routers
 
-from users.views import APIToken, SignUp, UserViewSet
-from .views import (CategoryViewSet, CommentViewSet, GenreViewSet,
-                    ReviewViewSet, TitlesViewSet)
+from .views import (APIToken, CategoryViewSet, CommentViewSet, GenreViewSet,
+                    ReviewViewSet, SignUp, TitlesViewSet, UserViewSet)
 
 app_name = 'api'
 
@@ -27,7 +26,6 @@ urlpatterns_auth = [
 ]
 
 urlpatterns = [
-    path('v1/users/me/', UserView.as_view()),
-    path('v1/', include(router_v1.urls)),
     path('v1/auth/', include(urlpatterns_auth)),
+    path('v1/', include(router_v1.urls))
 ]
