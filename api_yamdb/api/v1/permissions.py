@@ -3,6 +3,7 @@ from rest_framework import permissions
 
 class AdminOrReadOnly(permissions.BasePermission):
     """Пермишн для чтения, либо для админа"""
+    message = 'Вы должны иметь права автора или администратора'
 
     def has_permission(self, request, view):
         return (
@@ -12,6 +13,8 @@ class AdminOrReadOnly(permissions.BasePermission):
 
 class ReviewAndComment(permissions.BasePermission):
     """Пермишн отзывов и комментариев"""
+    message = ('Вы должны иметь права одного из: автор, администратор '
+               'модератор, для выполнения этих действий.')
 
     def has_object_permission(self, request, view, obj):
         return (
@@ -23,6 +26,7 @@ class ReviewAndComment(permissions.BasePermission):
 
 class IsAdmin(permissions.BasePermission):
     """Пермишн для админа"""
+    message = 'Вы должны иметь права администратора'
 
     def has_permission(self, request, view):
         return request.user.is_authenticated and request.user.is_admin
