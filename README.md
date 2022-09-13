@@ -30,6 +30,7 @@ python manage.py runserver
 ```
 ## Документация по запросам
 см. yatube_api/static/redoc.yaml  или после запуска на localhost по ссылке http://127.0.0.1:8000/redoc/
+
 ### Примеры запросов API к сайту
 Запрос на просмотр произведений:
 ```
