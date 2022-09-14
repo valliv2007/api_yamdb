@@ -3,6 +3,7 @@ from django.db import models
 
 from users.models import User
 from .validators import validate_year
+from .constants import MAX_SCORE, MIN_SCORE, MESSAGE_ERR_SCORE
 
 
 class Genre(models.Model):
@@ -102,10 +103,10 @@ class Review(models.Model):
     )
     score = models.PositiveSmallIntegerField(
         verbose_name='Оценка',
-        validators=[
-            MinValueValidator(1, message='Оценка должна быть от 1 до 10'),
-            MaxValueValidator(10, message='Оценка должна быть от 1 до 10'),
-        ],
+        validators=(
+            MinValueValidator(MIN_SCORE, message=MESSAGE_ERR_SCORE),
+            MaxValueValidator(MAX_SCORE, message=MESSAGE_ERR_SCORE),
+        ),
     )
 
     class Meta:
