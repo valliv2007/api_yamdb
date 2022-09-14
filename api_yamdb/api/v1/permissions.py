@@ -3,7 +3,7 @@ from rest_framework import permissions
 
 class AdminOrReadOnly(permissions.BasePermission):
     """Пермишн для чтения, либо для админа"""
-    message = 'Для редактировани Вы должны иметь права администратора '
+    message = 'Для редактирования Вы должны иметь права администратора '
 
     def has_permission(self, request, view):
         return (

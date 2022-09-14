@@ -2,9 +2,9 @@ from django.utils import timezone
 from rest_framework import exceptions, serializers
 from rest_framework.validators import UniqueValidator
 
-from reviews.constants import MAX_SCORE, MIN_SCORE, MESSAGE_ERR_SCORE
+from api_yamdb.constants import MAX_SCORE, MIN_SCORE, MESSAGE_ERR_SCORE, ROLES
 from reviews.models import Category, Comment, Genre, Review, Title
-from users.models import ROLES, User
+from users.models import User
 from .validators import validate_user
 
 

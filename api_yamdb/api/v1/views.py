@@ -118,8 +118,8 @@ class SignUp(APIView):
         if serializer.is_valid():
             try:
                 User.objects.get_or_create(
-                    username=serializer.initial_data.get('username'),
-                    email=serializer.initial_data.get('email'))
+                    username=serializer.data.get('username'),
+                    email=serializer.data.get('email'))
             except IntegrityError as error:
                 return Response(
                     {'error': str(error)}, status=status.HTTP_400_BAD_REQUEST)

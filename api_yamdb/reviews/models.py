@@ -3,7 +3,7 @@ from django.db import models
 
 from users.models import User
 from .validators import validate_year
-from .constants import MAX_SCORE, MIN_SCORE, MESSAGE_ERR_SCORE
+from api_yamdb.constants import MAX_SCORE, MIN_SCORE, MESSAGE_ERR_SCORE
 
 
 class Genre(models.Model):

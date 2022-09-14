@@ -1,14 +1,8 @@
 from django.contrib.auth.models import AbstractUser, UserManager
 from django.db import models
 
-USER = 'user'
-ADMIN = 'admin'
-MODERATOR = 'moderator'
-
-ROLES = ((USER, 'Аутентифицированный пользователь'),
-         (MODERATOR, 'Модератор'),
-         (ADMIN, 'Администратор'))
-FORBIDDEN_USERNAME = 'me'
+from api_yamdb.constants import (ADMIN, FORBIDDEN_USERNAME,
+                                 MODERATOR, ROLES, USER)
 
 
 class APIUserManager(UserManager):

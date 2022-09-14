@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from users.models import FORBIDDEN_USERNAME
+from api_yamdb.constants import FORBIDDEN_USERNAME
 
 
 def validate_user(data):
