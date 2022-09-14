@@ -1,13 +1,12 @@
-from datetime import datetime
+from django.utils import timezone
 
 from rest_framework import exceptions, serializers
 from rest_framework.validators import UniqueValidator
 
 from reviews.models import Category, Comment, Genre, Review, Title
-from users.models import FORBIDDEN_USERNAME, ROLES, User
-
-MAX_SCORE = 10
-MIN_SCORE = 1
+from reviews.constants import MAX_SCORE, MIN_SCORE, MESSAGE_ERR_SCORE
+from users.models import ROLES, User
+from .validators import validate_user
 
 
 class CategorySerializer(serializers.ModelSerializer):
@@ -53,9 +52,9 @@ class TitlesPostDeleteSerializer(serializers.ModelSerializer):
         fields = ('id', 'name', 'year', 'rating', 'description', 'genre',
                   'category')
 
-    def validate(self, data):
+    def validate_year(self, data):
         """Метод для валидации года"""
-        if int(data.get('year') or 0) > datetime.now().year:
+        if data > timezone.now().year:
             raise serializers.ValidationError(
                 'Год не может быть больше текущего')
         return data
@@ -65,20 +64,20 @@ class ReviewSerializer(serializers.ModelSerializer):
     """Сериалайзер для отзывов"""
 
     author = serializers.SlugRelatedField(
-        read_only=True, slug_field='username'
-    )
+        read_only=True, slug_field='username')
 
     class Meta:
         model = Review
         fields = ('id', 'text', 'author', 'score', 'pub_date')
-        read_only_fields = ('id', 'author')
+        read_only_fields = ('id',)
 
     def validate(self, data):
         request = self.context.get('request')
         if request.method == 'POST':
-            title_id = (self.context['view'].kwargs.get('title_id'),)
+            title_id = self.context['view'].kwargs.get('title_id')
             author = self.context['request'].user
-            if Review.objects.filter(title=title_id, author=author).exists():
+            if Review.objects.filter(
+                    title__id=title_id, author=author).exists():
                 raise serializers.ValidationError(
                     'Вы уже оставляли отзыв на это произведение.'
                 )
@@ -86,9 +85,7 @@ class ReviewSerializer(serializers.ModelSerializer):
 
     def validate_score(self, data):
         if MAX_SCORE < data < MIN_SCORE:
-            raise serializers.ValidationError(
-                'Оценка должна быть от 1 до 10'
-            )
+            raise serializers.ValidationError(MESSAGE_ERR_SCORE)
         return data
 
 
@@ -109,7 +106,8 @@ class UserSerializer(serializers.ModelSerializer):
     """Сериалайзер для пользователей"""
 
     email = serializers.EmailField(
-        validators=[UniqueValidator(queryset=User.objects.all())])
+        validators=(UniqueValidator(queryset=User.objects.all()),)
+    )
 
     class Meta:
         model = User
@@ -118,9 +116,7 @@ class UserSerializer(serializers.ModelSerializer):
         read_only_fields = ('role',)
 
     def validate(self, data):
-        if data.get('username') == FORBIDDEN_USERNAME:
-            raise serializers.ValidationError(
-                f'{FORBIDDEN_USERNAME} недопустимое имя пользователя')
+        validate_user(data)
         return data
 
 
@@ -137,9 +133,7 @@ class AdminSerializer(serializers.ModelSerializer):
             'username', 'email', 'first_name', 'last_name', 'bio', 'role')
 
     def validate(self, data):
-        if data.get('username') == FORBIDDEN_USERNAME:
-            raise serializers.ValidationError(
-                f'{FORBIDDEN_USERNAME} недопустимое имя пользователя')
+        validate_user(data)
         return data
 
 
