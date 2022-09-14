@@ -1,10 +1,9 @@
 from django.utils import timezone
-
 from rest_framework import exceptions, serializers
 from rest_framework.validators import UniqueValidator
 
-from reviews.models import Category, Comment, Genre, Review, Title
 from reviews.constants import MAX_SCORE, MIN_SCORE, MESSAGE_ERR_SCORE
+from reviews.models import Category, Comment, Genre, Review, Title
 from users.models import ROLES, User
 from .validators import validate_user
 
@@ -104,10 +103,8 @@ class CommentSerializer(serializers.ModelSerializer):
 
 class UserSerializer(serializers.ModelSerializer):
     """Сериалайзер для пользователей"""
-
-    email = serializers.EmailField(
-        validators=(UniqueValidator(queryset=User.objects.all()),)
-    )
+    email = serializers.EmailField()
+    username = serializers.CharField()
 
     class Meta:
         model = User
@@ -115,8 +112,15 @@ class UserSerializer(serializers.ModelSerializer):
             'username', 'email', 'first_name', 'last_name', 'bio', 'role')
         read_only_fields = ('role',)
 
-    def validate(self, data):
+    def validate_username(self, data):
         validate_user(data)
+        if not data:
+            raise serializers.ValidationError('Отстутвие обязательного поля')
+        return data
+
+    def validate_email(self, data):
+        if not data:
+            raise serializers.ValidationError('Отстутвие обязательного поля')
         return data
 
 
