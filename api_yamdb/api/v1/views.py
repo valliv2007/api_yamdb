@@ -114,15 +114,10 @@ class SignUp(APIView):
 
     def post(self, request):
         serializer = UserSerializer(data=request.data)
-        if User.objects.filter(
+        if serializer.is_valid(raise_exception=True):
+            User.objects.get_or_create(
                 username=serializer.initial_data.get('username'),
-                email=serializer.initial_data.get('email')).exists():
-            send_confirmation_code_on_email(
-                serializer.initial_data['username'],
-                serializer.initial_data['email'])
-            return Response(serializer.initial_data, status=status.HTTP_200_OK)
-        if serializer.is_valid():
-            serializer.save()
+                email=serializer.initial_data.get('email'))
             send_confirmation_code_on_email(
                 serializer.data['username'], serializer.data['email'])
             return Response(serializer.initial_data, status=status.HTTP_200_OK)
