@@ -103,6 +103,7 @@ class CommentSerializer(serializers.ModelSerializer):
 
 class UserSerializer(serializers.ModelSerializer):
     """Сериалайзер для пользователей"""
+
     email = serializers.EmailField()
     username = serializers.CharField()
 
