@@ -1,6 +1,7 @@
 from django.conf import settings
 from django.contrib.auth.tokens import default_token_generator
 from django.core.mail import send_mail
+from django.db import IntegrityError
 from django.db.models import Avg
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
@@ -114,18 +115,17 @@ class SignUp(APIView):
 
     def post(self, request):
         serializer = UserSerializer(data=request.data)
-        if User.objects.filter(
-                username=serializer.initial_data.get('username'),
-                email=serializer.initial_data.get('email')).exists():
-            send_confirmation_code_on_email(
-                serializer.initial_data['username'],
-                serializer.initial_data['email'])
-            return Response(serializer.initial_data, status=status.HTTP_200_OK)
         if serializer.is_valid():
-            serializer.save()
+            try:
+                User.objects.get_or_create(
+                    username=serializer.data.get('username'),
+                    email=serializer.data.get('email'))
+            except IntegrityError as error:
+                return Response(
+                    {'error': str(error)}, status=status.HTTP_400_BAD_REQUEST)
             send_confirmation_code_on_email(
                 serializer.data['username'], serializer.data['email'])
-            return Response(serializer.initial_data, status=status.HTTP_200_OK)
+            return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -145,7 +145,8 @@ class APIToken(APIView):
                 return Response(
                     {'token': str(token)}, status=status.HTTP_200_OK)
             return Response(
-                serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+                {'confirmation_code': 'Неверный код подтверждения'},
+                status=status.HTTP_400_BAD_REQUEST)
 
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -164,10 +165,8 @@ class UserViewSet(viewsets.ModelViewSet):
         if request.method == 'PATCH':
             serializer = UserSerializer(
                 request.user, data=request.data, partial=True, many=False)
-            if serializer.is_valid():
+            if serializer.is_valid(raise_exception=True):
                 serializer.save()
                 return Response(serializer.data, status=status.HTTP_200_OK)
-            return Response(
-                serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         serializer = UserSerializer(request.user)
         return Response(serializer.data, status=status.HTTP_200_OK)
