@@ -2,10 +2,10 @@ from django.utils import timezone
 from rest_framework import exceptions, serializers
 from rest_framework.validators import UniqueValidator
 
-from api_yamdb.constants import MAX_SCORE, MIN_SCORE, MESSAGE_ERR_SCORE, ROLES
+from api_yamdb.constants import (FORBIDDEN_USERNAME, MAX_SCORE, MIN_SCORE,
+                                 MESSAGE_ERR_SCORE, ROLES)
 from reviews.models import Category, Comment, Genre, Review, Title
 from users.models import User
-from .validators import validate_user
 
 
 class CategorySerializer(serializers.ModelSerializer):
@@ -101,11 +101,20 @@ class CommentSerializer(serializers.ModelSerializer):
         read_only_fields = ('id',)
 
 
-class UserSerializer(serializers.ModelSerializer):
+class UserValidatorMixin(serializers.Serializer):
+    """Сереиалайзер для проверки имени пользователя"""
+    def validate(self, data):
+        if data.get('username') == FORBIDDEN_USERNAME:
+            raise serializers.ValidationError(
+                f'{FORBIDDEN_USERNAME} недопустимое имя пользователя')
+        return data
+
+
+class UserSerializer(serializers.ModelSerializer, UserValidatorMixin):
     """Сериалайзер для пользователей"""
 
-    email = serializers.EmailField()
-    username = serializers.CharField()
+    email = serializers.EmailField(required=True)
+    username = serializers.CharField(required=True)
 
     class Meta:
         model = User
@@ -113,19 +122,8 @@ class UserSerializer(serializers.ModelSerializer):
             'username', 'email', 'first_name', 'last_name', 'bio', 'role')
         read_only_fields = ('role',)
 
-    def validate_username(self, data):
-        validate_user(data)
-        if not data:
-            raise serializers.ValidationError('Отстутвие обязательного поля')
-        return data
 
-    def validate_email(self, data):
-        if not data:
-            raise serializers.ValidationError('Отстутвие обязательного поля')
-        return data
-
-
-class AdminSerializer(serializers.ModelSerializer):
+class AdminSerializer(serializers.ModelSerializer, UserValidatorMixin):
     """Сериалайзер для админа"""
 
     email = serializers.EmailField(
@@ -136,10 +134,6 @@ class AdminSerializer(serializers.ModelSerializer):
         model = User
         fields = (
             'username', 'email', 'first_name', 'last_name', 'bio', 'role')
-
-    def validate(self, data):
-        validate_user(data)
-        return data
 
 
 class JWTTokenSerializer(serializers.Serializer):

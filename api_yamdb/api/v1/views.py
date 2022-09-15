@@ -115,18 +115,17 @@ class SignUp(APIView):
 
     def post(self, request):
         serializer = UserSerializer(data=request.data)
-        if serializer.is_valid():
-            try:
-                User.objects.get_or_create(
-                    username=serializer.data.get('username'),
-                    email=serializer.data.get('email'))
-            except IntegrityError as error:
-                return Response(
-                    {'error': str(error)}, status=status.HTTP_400_BAD_REQUEST)
-            send_confirmation_code_on_email(
-                serializer.data['username'], serializer.data['email'])
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        serializer.is_valid(raise_exception=True)
+        try:
+            User.objects.get_or_create(
+                username=serializer.data.get('username'),
+                email=serializer.data.get('email'))
+        except IntegrityError as error:
+            return Response(
+                {'error': str(error)}, status=status.HTTP_400_BAD_REQUEST)
+        send_confirmation_code_on_email(
+            serializer.data['username'], serializer.data['email'])
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 class APIToken(APIView):
@@ -136,14 +135,15 @@ class APIToken(APIView):
 
     def post(self, request):
         serializer = JWTTokenSerializer(data=request.data)
-        if serializer.is_valid(raise_exception=True):
-            user = get_object_or_404(
-                User, username=serializer.data['username'])
-            if default_token_generator.check_token(
-               user, serializer.data['confirmation_code']):
-                token = AccessToken.for_user(user)
-                return Response(
-                    {'token': str(token)}, status=status.HTTP_200_OK)
+        serializer.is_valid(raise_exception=True)
+        user = get_object_or_404(
+            User, username=serializer.data['username'])
+        if default_token_generator.check_token(
+           user, serializer.data['confirmation_code']):
+            token = AccessToken.for_user(user)
+            return Response(
+                {'token': str(token)}, status=status.HTTP_200_OK)
+        else:
             return Response(
                 {'confirmation_code': 'Неверный код подтверждения'},
                 status=status.HTTP_400_BAD_REQUEST)
